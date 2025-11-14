@@ -15,6 +15,10 @@ public class Message {
         this.timestamp = timestamp;
     }
 
+    public Message(String text) {
+        this.text = text;
+    }
+
     public int getUserId() {
         return userId;
     }

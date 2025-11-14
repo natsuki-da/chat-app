@@ -9,9 +9,6 @@ public class User {
     private String password;
     private List<Message> messages = new ArrayList<>();
 
-    public User() {
-    }
-
     public User(int id, String username, String password) {
         this.id = id;
         this.username = username;
