@@ -16,10 +16,10 @@ public class UserDatabaseDAO implements UserDAO{
             pstmt.setString(2, password);
             try (ResultSet rs = pstmt.executeQuery()){
                 if(rs.next()){
-                    int userId = rs.getInt("id");
+                    int id = rs.getInt("user_id");
                     String userName = rs.getString("user_name");
                     String userPassword = rs.getString("password");
-                    user = new User(userId, userName, userPassword);
+                    user = new User(id, userName, userPassword);
                 }
             }
         } catch (SQLException e) {

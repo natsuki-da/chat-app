@@ -1,9 +1,6 @@
 package se.sprinto.hakan.chatapp;
 
-import se.sprinto.hakan.chatapp.dao.MessageDAO;
-import se.sprinto.hakan.chatapp.dao.MessageListDAO;
-import se.sprinto.hakan.chatapp.dao.UserDAO;
-import se.sprinto.hakan.chatapp.dao.UserListDAO;
+import se.sprinto.hakan.chatapp.dao.*;
 import se.sprinto.hakan.chatapp.model.Message;
 import se.sprinto.hakan.chatapp.model.User;
 
@@ -16,13 +13,13 @@ import java.util.List;
 
 public class ClientHandler implements Runnable {
 
-    private final Socket socket;
+private final Socket socket;
     private final ChatServer server;
     private PrintWriter out;
     private User user;
 
-    private final UserDAO userDAO = new UserListDAO();
-    private final MessageDAO messageDAO = new MessageListDAO();
+    private final UserDAO userDAO = new UserDatabaseDAO();
+    private final MessageDAO messageDAO = new MessageDatabaseDAO();
 
     ClientHandler(Socket socket, ChatServer server) {
         this.socket = socket;
@@ -56,7 +53,7 @@ public class ClientHandler implements Runnable {
                     writer.println("Fel användarnamn eller lösenord.");
                     writer.println("Du måste skriva /quit nu för att avsluta denna klient");
                     writer.println("Pröva att återansluta med en ny klient");
-                    
+
                 }
             } else {
                 writer.println("Skapa nytt konto. Ange användarnamn:");
@@ -91,7 +88,8 @@ public class ClientHandler implements Runnable {
                     }
                 } else {
                     server.broadcast(message, this);
-                    messageDAO.saveMessage(new Message(user.getId(), message, java.time.LocalDateTime.now()));
+//                    messageDAO.saveMessage(new Message(user.getId(), message, java.time.LocalDateTime.now()));
+                    messageDAO.saveMessage(new Message(user.getId(), message));
                 }
             }
 
@@ -110,4 +108,3 @@ public class ClientHandler implements Runnable {
         if (out != null) out.println(msg);
     }
 }
-
