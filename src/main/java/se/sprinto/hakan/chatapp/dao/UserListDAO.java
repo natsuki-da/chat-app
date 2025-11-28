@@ -20,6 +20,11 @@ public class UserListDAO implements UserDAO {
     }
 
     @Override
+    public User findByUsername(String username) {
+        return null;
+    }
+
+    @Override
     public User login(String username, String password) {
         Optional<User> found = users.stream()
                 .filter(u -> u.getUsername().equals(username) && u.getPassword().equals(password))

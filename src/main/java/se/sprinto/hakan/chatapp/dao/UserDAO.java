@@ -6,4 +6,7 @@ public interface UserDAO {
     User login(String username, String password);
 
     User register(User user);
+
+    User findByUsername(String username);
+
 }

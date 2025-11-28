@@ -3,6 +3,7 @@ package se.sprinto.hakan.chatapp;
 import se.sprinto.hakan.chatapp.dao.*;
 import se.sprinto.hakan.chatapp.model.Message;
 import se.sprinto.hakan.chatapp.model.User;
+import se.sprinto.hakan.chatapp.service.UserService;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,13 +14,14 @@ import java.util.List;
 
 public class ClientHandler implements Runnable {
 
-private final Socket socket;
+    private final Socket socket;
     private final ChatServer server;
     private PrintWriter out;
     private User user;
 
     private final UserDAO userDAO = new UserDatabaseDAO();
     private final MessageDAO messageDAO = new MessageDatabaseDAO();
+    private final UserService userService = new UserService(userDAO);
 
     ClientHandler(Socket socket, ChatServer server) {
         this.socket = socket;
@@ -53,18 +55,33 @@ private final Socket socket;
                     writer.println("Fel användarnamn eller lösenord.");
                     writer.println("Du måste skriva /quit nu för att avsluta denna klient");
                     writer.println("Pröva att återansluta med en ny klient");
-
+                    return;
                 }
             } else {
-                writer.println("Skapa nytt konto. Ange användarnamn:");
-                String username = in.readLine();
-                writer.println("Ange lösenord:");
-                String password = in.readLine();
-                user = userDAO.register(new User(username, password));
+                writer.println("Skapa nytt konto.");
+                String username;
+                String availableUsername = null;
+                while (availableUsername == null) {
+                    writer.println("Ange användarnamn:");
+                    username = in.readLine();
+                    try {
+                        availableUsername = userService.checkUsernameAvailable(username);
+                    } catch (IllegalArgumentException e) {
+                        e.printStackTrace();
+                    }
+                }
+                String password;
+                String validPassword = null;
+                while (validPassword == null) {
+                    writer.println("Ange lösenord:");
+                    password = in.readLine();
+                    validPassword = userService.validatePassword(password);
+                }
+                user = userDAO.register(new User(availableUsername, validPassword));
                 writer.println("Konto skapat. Välkommen, " + user.getUsername() + "!");
             }
 
-            writer.println("Du är inloggad som: " + user.getUsername() + "");
+            writer.println("Du är inloggad som: " + user.getUsername() + " ");
             writer.println("Nu kan du börja skriva meddelanden");
             writer.println("Skriv /quit för att avsluta");
             writer.println("Skriv /mymsgs för att lista alla dina meddelanden");

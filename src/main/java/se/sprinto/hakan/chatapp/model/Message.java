@@ -15,7 +15,7 @@ public class Message {
         this.text = text;
         this.timestamp = timestamp;
     }
-    //必要ない
+
     public Message(String text){
         this.text = text;
     }
@@ -31,7 +31,6 @@ public class Message {
         this.text = text;
         this.timestamp = timestamp;
     }
-
 
     public int getUserId() {
         return userId;
